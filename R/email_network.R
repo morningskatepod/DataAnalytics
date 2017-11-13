@@ -8,6 +8,7 @@ nrc_neg <- get_sentiments('nrc') %>%
   filter(sentiment == 'negative')
 
 emails <- read.csv('email_info.csv', nrows = 1000)
+emails$content <- as.character(emails$content)
 neg_emails <- emails %>%
   select(user, content) %>%
   unnest_tokens(word, content) %>%
