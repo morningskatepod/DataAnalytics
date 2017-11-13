@@ -18,3 +18,4 @@ neg_emails <- emails %>%
 neg_users <- neg_emails %>%
   group_by(user) %>%
   summarise(count = sum(n)) %>% data.frame()
+
