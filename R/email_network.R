@@ -14,3 +14,5 @@ neg_emails <- emails %>%
   unnest_tokens(word, content) %>%
   inner_join(nrc_neg) %>%
   count(word, index = user, sort = TRUE)
+
+neg_emails
