@@ -16,6 +16,6 @@ neg_emails <- emails %>%
   count(word, index = user, sort = TRUE)
 
 neg_users <- neg_emails %>%
-  group_by(user) %>%
+  group_by(index) %>%
   summarise(count = sum(n)) %>% data.frame()
 
