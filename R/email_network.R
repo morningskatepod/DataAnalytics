@@ -1,8 +1,7 @@
 library(dplyr)
 library(tidytext)
 
-psycho <- read.csv("psychometric_info.csv")
-employee_list <-  unique(psycho$user)
+employee_list <- read.csv('Employee_info.csv')
 
 nrc_neg <- get_sentiments('nrc') %>%
   filter(sentiment == 'negative')
