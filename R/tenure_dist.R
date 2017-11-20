@@ -1,8 +1,8 @@
 # loop through employee data sets and find employee start and end dates
-rm(list = ls())
 library(dplyr)
 library(lubridate)
 library(hms)
+employee_list <- read.csv('Employee_info.csv')
 big_data <- read_csv("logon_info.csv")
 unique_users <- unique(big_data$user)
 big_data$day <- format(as.POSIXct(strptime(big_data$date,"%m/%d/%Y %H:%M:%S",tz="")) ,format = "%Y-%m-%d")
@@ -37,4 +37,6 @@ for(usr in unique_users){
   }
 }
 
-write_csv(tenure_distribution, "tenure_distribution.csv")
+tenure_distribution <- merge(tenure_distribution, employee_list[,c("user_id","role","attrition")], by.x = 'user',by.y = 'user.id')
+
+# write_csv(tenure_distribution, "tenure_distribution.csv")
