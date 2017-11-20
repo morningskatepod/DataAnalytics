@@ -1,5 +1,6 @@
 library(dplyr)
 library(tidytext)
+library(stringr)
 #
 
 # employee_list <- read.csv('Employee_info.csv')

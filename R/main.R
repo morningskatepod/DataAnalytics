@@ -40,7 +40,7 @@ for(end_date in end_dates){
   # write outputs
   write_csv(email_distribution,
             path = paste0("output/", end_date,
-                          "/email_distribution.csv"))
+                          "_email_distribution.csv"))
 
   # garbage collection
   rm(email_distribution, raw,
