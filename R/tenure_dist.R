@@ -19,7 +19,7 @@ big_data$day <- format(as.POSIXct(strptime(big_data$date,"%m/%d/%Y %H:%M:%S",tz=
 for(usr in unique_users){
   usr_dat <- big_data %>%
     filter(user == usr) %>%
-    arrange(date)
+    arrange(day)
   tenure <- head(usr_dat$day, 1) %--% tail(usr_dat$day, 1)
   tenure <- as.duration(tenure)
   tenure <- as.numeric(tenure, "days")
