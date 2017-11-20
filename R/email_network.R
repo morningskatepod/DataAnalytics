@@ -12,7 +12,7 @@ emails$content <- as.character(emails$content)
 
 #Splits emails by word
 neg_emails <- emails %>%
-  select(X, user, date, content) %>%
+  select(user, date, content) %>%
   unnest_tokens(word, content)
 
 #Sums neg words by user
