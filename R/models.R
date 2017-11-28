@@ -15,6 +15,7 @@ fired <- tenure_distribution %>%
 
 employee_info <- read_csv('data/Employee_info.csv')
 
+
 end_dates <- unique(fired$end_date)
 end_dates <- subset(end_dates, as.Date(end_dates) < as.Date('2010-09-22'))
 results <- rep(0, length(end_dates))
