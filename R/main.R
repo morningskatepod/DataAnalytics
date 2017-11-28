@@ -13,6 +13,7 @@ fired <- tenure_distribution %>%
   arrange(end_date)
 
 all_data <- read_csv("data/email_info.csv")
+all_data$day <- format(as.POSIXct(strptime(all_data$date,"%m/%d/%Y %H:%M:%S",tz="")) ,format = "%Y-%m-%d")
 
 start_date <- unique(fired$start_date)
 end_dates <- unique(fired$end_date)

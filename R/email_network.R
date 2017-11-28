@@ -39,7 +39,6 @@ total_emails <- emails %>%
 
 unmatched <- emails %>%
   mutate(domain = sapply(strsplit(as.character(emails$from), "@"), `[`,2)) %>%
-  filter(domain == 'dtaa.com') %>%
   group_by(user) %>%
   summarise(unmatched = length(unique(from))) %>%
   mutate(unmatched = ifelse(unmatched > 1, 1,0)) %>%
