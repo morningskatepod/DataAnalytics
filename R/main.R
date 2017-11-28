@@ -15,14 +15,14 @@ fired <- tenure_distribution %>%
 all_data <- read_csv("data/email_info.csv")
 all_data$day <- format(as.POSIXct(strptime(all_data$date,"%m/%d/%Y %H:%M:%S",tz="")) ,format = "%Y-%m-%d")
 
-start_date <- unique(fired$start_date)
+start_date <- min(unique(fired$start_date))
 end_dates <- unique(fired$end_date)
 # test
 # end_dates <- end_dates[1:3]
 
 for(end_date in end_dates){
 
-  end_date <- as_date(end_date)
+  end_date <- as.character(end_date)
 
   # create directory
   dir.create(paste0("output/", end_date))
