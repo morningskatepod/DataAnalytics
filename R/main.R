@@ -39,7 +39,7 @@ for(end_date in end_dates){
 
   # write outputs
   write_csv(email_distribution,
-            path = paste0("output/", end_date,
+            file = paste0("output/", end_date, '/', end_date,
                           "_email_distribution.csv"))
 
   # garbage collection
