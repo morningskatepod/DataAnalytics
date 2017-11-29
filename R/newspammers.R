@@ -16,7 +16,7 @@ for(d in days) {
   users <- emails %>%
     filter(day == d) %>%
     data.frame()
-  users <- unique(emails$user)
+  users <- unique(users$user)
   daycounts <- rbind(daycounts, c(date = d,count = sum(!as.character(users) %in% newusers)))
   newusers <- unique(c(newusers, as.character(users)))
   }
