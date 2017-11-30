@@ -10,13 +10,13 @@ webtimes <- http %>%
   mutate(time_between = as.numeric(((as.POSIXct(lead(time, 1), format = '%H:%M:%S')) -
   (as.POSIXct(time, format = '%H:%M:%S')))/60, units = 'secs')) %>%
   ungroup() %>%
-  filter(time_between > 0) %>%
+  filter(time_between > 0, time_between < 60) %>%
   data.frame()
 
 # filter out the urls on facebook
 facebook <- webtimes %>%
-  mutate(fb = sum(str_detect(url, 'facebook'))) %>%
-  filter(fb == 1, time_between < 60) %>%
+  mutate(fb = str_detect(url, 'facebook')) %>%
+  filter(fb == TRUE) %>%
   group_by_(.dots = c("day","user")) %>%
   summarise(total = sum(time_between)) %>% ungroup() %>%
   group_by(user) %>%
