@@ -2,12 +2,13 @@ library(dplyr)
 
 #determine time between visiting url and next url
 webtimes <- http %>%
-  mutate(time = format(as.POSIXct(strptime(date,"%m/%d/%Y %H:%M:%S",tz="")) ,format = "%H:%M:%S"))
-  mutate(day = format(as.POSIXct(strptime(date,"%m/%d/%Y %H:%M:%S",tz="")) ,format = "%Y-%m-%d"))
+  mutate(time = format(as.POSIXct(strptime(date,"%m/%d/%Y %H:%M:%S",tz="")) ,format = "%H:%M:%S")) %>%
+  mutate(day = format(as.POSIXct(strptime(date,"%m/%d/%Y %H:%M:%S",tz="")) ,format = "%Y-%m-%d")) %>%
   select(user, url, time, date, day) %>%
   group_by(user) %>%
   arrange(date) %>%
-  mutate(time_between = (time - lead(time, 1))/60) %>%
+  mutate(time_between = as.numeric(((as.POSIXct(lead(time, 1), format = '%H:%M:%S')) -
+  (as.POSIXct(time, format = '%H:%M:%S')))/60, units = 'secs')) %>%
   ungroup() %>%
   filter(time_between > 0) %>%
   data.frame()
