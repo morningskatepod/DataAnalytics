@@ -19,20 +19,32 @@ employee_info <- read_csv('data/Employee_info.csv')
 end_dates <- unique(fired$end_date)
 end_dates <- subset(end_dates, as.Date(end_dates) < as.Date('2010-09-22'))
 results <- rep(0, length(end_dates))
+
 for(end_date in end_dates) {
 
 email_distribution <- read_csv(paste0("output/",end_date,"/",end_date,
                                       "_email_distribution.csv"))
+email_distribution <- email_distribution %>%
+  mutate(neg_rate = count_neg/total_emails) %>%
+  mutate(names_rate = names_used/total_emails) %>%
+  select(-unmatched)
+
 email_distribution <- merge(email_distribution, employee_info[,c('user_id', "attrition")],
       by.x = 'user', by.y = 'user_id')
 
+end_d <- end_date
+unfired <- tenure_distribution %>%
+  filter(as.Date(end_date) > as.Date(end_d)) %>%
+  select(user)
+email_distribution <- email_distribution[email_distribution$user %in% unfired[,1],]
+
 raw <- email_distribution[, -1]
-raw <- scale(raw[,-6])
-raw <- cbind(raw, attrition = email_distribution[,'attrition'])
+raw <- scale(raw[,-7])
+raw <- cbind(raw, attrition = email_distribution$attrition)
 
 trc <- trainControl(method = "cv", number = 10)
 logfit <- train(factor(attrition) ~ ., data = raw, trControl = trc, method = "glm",
                 family = binomial())
 paste0("Overall error rate: ", 1 - logfit$results[, 2])
-
+results[match(end_date, end_dates)] <- 1 - logfit$results[, 2]
 }
