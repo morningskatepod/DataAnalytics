@@ -46,7 +46,7 @@ total_emails <- emails %>%
   summarise(total_emails = n()) %>% data.frame() %>%
   merge(neg_users, all = TRUE) %>%
   merge(pos_users, all = TRUE) %>%
-  mutate(count_neg = ifelse(is.na(count_neg), 0, count_neg))
+  mutate(count_neg = ifelse(is.na(count_neg), 0, count_neg)) %>%
   mutate(count_pos = ifelse(is.na(count_pos), 0, count_pos))
 #
 # unmatched <- emails %>%
