@@ -1,5 +1,6 @@
 # main
-
+library(readr)
+library(stringr)
 rm(list = ls())
 options(stringsAsFactors = FALSE)
 
