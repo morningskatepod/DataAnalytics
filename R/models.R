@@ -17,12 +17,12 @@ employee_info <- read_csv('data/Employee_info.csv')
 
 
 end_dates <- unique(fired$end_date)
-end_dates <- subset(end_dates, as.Date(end_dates) < as.Date('2010-09-22'))
+end_dates <- subset(end_dates, as.Date(end_dates) < as.Date('2011-05-13'))
 results <- rep(0, length(end_dates))
 resultsrf <- rep(0, length(end_dates))
 resultscart <- rep(0, length(end_dates))
 resultsknn <- rep(0, length(end_dates))
-vars <- matrix(ncol = 4)
+vars <- matrix(ncol = 5)
 
 for(end_date in end_dates) {
 
@@ -30,8 +30,9 @@ email_distribution <- read_csv(paste0("output/",end_date,"/",end_date,
                                       "_email_distribution.csv"))
 email_distribution <- email_distribution %>%
   mutate(neg_rate = count_neg/total_emails) %>%
-  mutate(names_rate = names_used/total_emails) %>%
-  select(-unmatched)
+  mutate(pos_rate = count_pos/total_emails) %>%
+  mutate(names_rate = names_used/total_emails)  %>%
+  mutate(total_rate = total_emails/as.numeric(as.Date(end_date)-as.Date('2010-01-04')))
 
 email_distribution <- merge(email_distribution, employee_info[,c('user_id', "attrition")],
       by.x = 'user', by.y = 'user_id')
@@ -43,10 +44,8 @@ unfired <- tenure_distribution %>%
 email_distribution <- email_distribution[email_distribution$user %in% unfired[,1],]
 
 raw <- email_distribution[, -1]
-raw <- scale(raw[,-c(4,7)])
-raw <- cbind(raw, spam = email_distribution$spam)
+raw <- scale(raw[,5:8])
 raw <- cbind(raw, attrition = email_distribution$attrition)
-raw <- raw[,-c(2,3,6)]
 
 trc <- trainControl(method = "cv", number = 10)
 logfit <- train(factor(attrition) ~ ., data = raw, trControl = trc, method = "glm",
