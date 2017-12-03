@@ -1,4 +1,5 @@
 library(dplyr)
+library(stringr)
 
 #determine time between visiting url and next url
 webtimes <- http %>%
@@ -20,4 +21,4 @@ facebook <- webtimes %>%
   group_by_(.dots = c("day","user")) %>%
   summarise(total = sum(time_between)) %>% ungroup() %>%
   group_by(user) %>%
-  summarise(median = median(total), avg = mean(total)) %>% data.frame()
+  summarise(median = median(total), avg = mean(total), n = n()) %>% data.frame()
