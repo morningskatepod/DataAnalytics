@@ -7,6 +7,8 @@ library(stringr)
 
 nrc_neg <- get_sentiments('nrc') %>%
   filter(sentiment == 'negative')
+nrc_pos <- get_sentiments('nrc') %>%
+  filter(sentiment == 'positive')
 
 # emails <- read.csv('email_info.csv')
 emails$content <- as.character(emails$content)
@@ -24,6 +26,14 @@ neg_users <- neg_emails %>%
   summarise(count_neg = sum(n)) %>%
   data.frame() %>% rename(user = index)
 
+#Sums pos words by user
+pos_users <- neg_emails %>%
+  inner_join(nrc_pos) %>%
+  count(word, index = user, sort = TRUE) %>%
+  group_by(index) %>%
+  summarise(count_pos = sum(n)) %>%
+  data.frame() %>% rename(user = index)
+
 # #Sums neg words by ind email
 # neg_indemails <- neg_emails %>%
 #   inner_join(nrc_neg) %>%
@@ -35,14 +45,16 @@ total_emails <- emails %>%
   group_by(user) %>%
   summarise(total_emails = n()) %>% data.frame() %>%
   merge(neg_users, all = TRUE) %>%
+  merge(pos_users, all = TRUE) %>%
   mutate(count_neg = ifelse(is.na(count_neg), 0, count_neg))
-
-unmatched <- emails %>%
-  mutate(domain = sapply(strsplit(as.character(emails$from), "@"), `[`,2)) %>%
-  group_by(user) %>%
-  summarise(unmatched = length(unique(from))) %>%
-  mutate(unmatched = ifelse(unmatched > 1, 1,0)) %>%
-  data.frame()
+  mutate(count_pos = ifelse(is.na(count_pos), 0, count_pos))
+#
+# unmatched <- emails %>%
+#   mutate(domain = sapply(strsplit(as.character(emails$from), "@"), `[`,2)) %>%
+#   group_by(user) %>%
+#   summarise(unmatched = length(unique(from))) %>%
+#   mutate(unmatched = ifelse(unmatched > 1, 1,0)) %>%
+#   data.frame()
 
 name_list <- data.frame(word = unique(sapply(strsplit(as.character(employee_list$employee_name)," "), `[`,1)))
 name_list[,1] <- sapply(as.character(name_list[,1]), tolower)
@@ -55,18 +67,18 @@ gossip <- neg_emails %>%
   rename(user = index) %>%
   data.frame()
 
-spam <- emails %>%
-  mutate(n_words = unlist(lapply(lapply(str_match_all(emails$content, "\\S+"),unique),length))) %>%
-  filter(n_words < 10) %>%
-  group_by(user) %>%
-  summarise(spam = ifelse(n() > 1,1,0)) %>%
-  data.frame()
+# spam <- emails %>%
+#   mutate(n_words = unlist(lapply(lapply(str_match_all(emails$content, "\\S+"),unique),length))) %>%
+#   filter(n_words < 10) %>%
+#   group_by(user) %>%
+#   summarise(spam = ifelse(n() > 1,1,0)) %>%
+#   data.frame()
 
-output <- merge(total_emails, unmatched, all = T)
-output$unmatched <- ifelse(is.na(output$unmatched), 0, output$unmatched)
-output <- merge(output, gossip, all = T)
+# output <- merge(total_emails, unmatched, all = T)
+# output$unmatched <- ifelse(is.na(output$unmatched), 0, output$unmatched)
+output <- merge(total_emails, gossip, all = T)
 output$names_used <- ifelse(is.na(output$names_used), 0, output$names_used)
-output <- merge(output, spam, all = T)
-output$spam <- ifelse(is.na(output$spam), 0, output$spam)
+# output <- merge(output, spam, all = T)
+# output$spam <- ifelse(is.na(output$spam), 0, output$spam)
 
 email_distribution <- output
